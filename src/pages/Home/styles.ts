@@ -59,4 +59,8 @@ export const StopCountdownButton = styled(BaseCountdownButton)`
 
     transition: background-color 0.3s;
   }
+
+  :focus {
+    box-shadow: 0 0 0 2px ${(props) => props.theme['gray-100']};
+  }
 `
