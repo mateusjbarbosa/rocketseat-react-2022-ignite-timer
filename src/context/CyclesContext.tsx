@@ -31,12 +31,22 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycleState, dispatch] = useReducer(cyclesReducer, {
-    activeCycleId: null,
-    cycles: [],
-  })
+  const [cycleState, dispatch] = useReducer(
+    cyclesReducer,
+    {
+      activeCycleId: null,
+      cycles: [],
+    },
+    () => {
+      const storedStateAsJSON = localStorage.getItem(
+        '@ignite-timer:cycles-state-1.0.0',
+      )
 
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
+      if (storedStateAsJSON) {
+        return JSON.parse(storedStateAsJSON)
+      }
+    },
+  )
 
   const { activeCycleId, cycles } = cycleState
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
@@ -67,6 +77,12 @@ export function CyclesContextProvider({
   function markCurrentCycleAsFinished() {
     dispatch(markCurrentCycleAsFinishedAction())
   }
+
+  useEffect(() => {
+    const stateAsJSON = JSON.stringify(cycleState)
+
+    localStorage.setItem('@ignite-timer:cycles-state-1.0.0', stateAsJSON)
+  }, [cycleState])
 
   return (
     <CyclesContext.Provider
